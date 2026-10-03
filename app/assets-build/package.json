@@ -1,0 +1,18 @@
+{
+  "name": "generator-tracker-php-css",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Local production CSS build for the PHP generator tracker.",
+  "scripts": {
+    "build:css": "tailwindcss -i ./input.css -o ../../public/assets/tailwind.min.css --minify"
+  },
+  "dependencies": {
+    "tailwindcss": "^3.4.18"
+  },
+  "devDependencies": {
+    "@tailwindcss/forms": "^0.5.10"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

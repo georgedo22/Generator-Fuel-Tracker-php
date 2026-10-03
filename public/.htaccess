@@ -1,0 +1,30 @@
+# =============================================================
+#  Public directory .htaccess (web root)
+# =============================================================
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Serve existing files/directories directly (assets, uploads, etc.)
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Route everything else through the front controller
+    RewriteRule ^ index.php [L]
+</IfModule>
+
+# Basic hardening
+Options -Indexes
+ServerSignature Off
+
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# Protect dotfiles
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>

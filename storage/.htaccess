@@ -1,0 +1,2 @@
+# Deny web access; this folder only holds temporary import files.
+Require all denied
