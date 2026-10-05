@@ -8,6 +8,7 @@ use App\Core\Auth;
 use App\Core\Csrf;
 use App\Core\Flash;
 use App\Core\RateLimiter;
+use App\Core\Remember;
 use App\Core\Response;
 use App\Models\User;
 
@@ -62,6 +63,12 @@ final class AuthController extends Controller
         RateLimiter::clear($limitKey);
 
         Auth::login($user);
+
+        // "Remember me for 30 days" checkbox → issue a secure hashed cookie.
+        if (!empty($_POST['remember-me'])) {
+            Remember::issue((string) $user['id']);
+        }
+
         $this->back(url('/dashboard'));
     }
 
@@ -69,6 +76,7 @@ final class AuthController extends Controller
     {
         $token = $_POST['_csrf'] ?? null;
         if (Csrf::verify(is_string($token) ? $token : null)) {
+            Remember::clear();
             Auth::logout();
         }
         $this->back(url('/login'));

@@ -82,3 +82,17 @@ VALUES (
     'ADMIN'
 )
 ON DUPLICATE KEY UPDATE `email` = `email`;
+
+-- -------------------------------------------------------------
+--  Remember-me tokens (used by the "Remember me for 30 days"
+--  login option). Only the SHA-256 hash of each token is stored.
+--  The app also creates this table automatically on first use.
+-- -------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `remember_tokens` (
+    `token_hash` VARCHAR(64)     NOT NULL,
+    `user_id`    CHAR(36)        NOT NULL,
+    `created_at` DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `expires_at` DATETIME        NOT NULL,
+    PRIMARY KEY (`token_hash`),
+    KEY `remember_user_idx` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
