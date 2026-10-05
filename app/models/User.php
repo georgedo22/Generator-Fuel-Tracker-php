@@ -26,11 +26,16 @@ final class User extends Model
     }
 
     /** @return array<int,array<string,mixed>> */
-    public static function all(): array
+    public static function all(?string $search = null): array
     {
-        $stmt = self::db()->query(
-            'SELECT id, name, email, role, created_at FROM users ORDER BY created_at ASC'
-        );
+        $sql = 'SELECT id, name, email, role, created_at FROM users';
+        if ($search !== null && trim($search) !== '') {
+            $sql .= ' WHERE email LIKE ?';
+            $stmt = self::db()->prepare($sql . ' ORDER BY created_at ASC');
+            $stmt->execute(['%' . trim($search) . '%']);
+        } else {
+            $stmt = self::db()->query($sql . ' ORDER BY created_at ASC');
+        }
         return $stmt->fetchAll();
     }
 

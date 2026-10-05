@@ -24,7 +24,7 @@ $actions .= '<a href="' . url('/reports/export' . ($exportQuery !== '' ? '?' . $
     <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div>
             <label class="mb-1.5 block text-sm font-medium text-slate-700">Generator</label>
-            <select name="generator_id" class="h-10 w-full rounded-lg border border-slate-300 px-3 text-sm focus:border-brand-500 focus:ring-brand-500">
+            <select name="generator_id" data-searchable class="h-10 w-full rounded-lg border border-slate-300 px-3 text-sm focus:border-brand-500 focus:ring-brand-500">
                 <option value="">All generators</option>
                 <?php foreach ($generators as $g): ?>
                     <option value="<?= Helpers::e((string) $g['id']) ?>" <?= $filters['generatorId'] === $g['id'] ? 'selected' : '' ?>><?= Helpers::e((string) $g['code']) ?></option>

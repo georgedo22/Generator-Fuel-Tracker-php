@@ -25,23 +25,37 @@ final class LogController extends Controller
         Auth::requireLogin();
 
         $filters = $this->filters();
-        $logs = FuelLog::filtered($filters);
-        $generators = Generator::allSimple();
+        $perPage = 25;
+        $page = max(1, (int) $this->query('page', '1'));
 
-        $totalLiters = 0.0;
-        $totalCost = 0.0;
-        foreach ($logs as $log) {
-            $totalLiters += (float) $log['liters'];
-            $totalCost += (float) $log['cost'];
+        $result = FuelLog::paginated($filters, $page, $perPage);
+        $logs = $result['rows'];
+        $total = $result['total'];
+        // Clamp out-of-range pages back to the last existing page.
+        if ($logs === [] && $total > 0) {
+            $page = max(1, (int) ceil($total / $perPage));
+            $result = FuelLog::paginated($filters, $page, $perPage);
+            $logs = $result['rows'];
         }
+
+        // True totals across all filtered rows (not just this page).
+        $totals = FuelLog::totals($filters);
+        $generators = Generator::allSimple();
 
         $this->render('logs/index', [
             'title' => 'Fuel Logs',
             'logs' => $logs,
             'generators' => $generators,
             'filters' => $filters,
-            'totalLiters' => round($totalLiters, 2),
-            'totalCost' => round($totalCost, 2),
+            'totalLiters' => round($totals['liters'], 2),
+            'totalCost' => round($totals['cost'], 2),
+            'logCount' => $totals['count'],
+            'pagination' => [
+                'page' => $page,
+                'perPage' => $perPage,
+                'total' => $total,
+                'path' => url('/logs'),
+            ],
             'old' => $this->old(),
         ]);
     }

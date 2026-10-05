@@ -143,6 +143,7 @@ $appName = (string) config('app.name', 'Generator Fuel Tracker');
     </div>
 </div>
 
+<script src="<?= asset('searchable-select.js') ?>"></script>
 <script>
     function toggleSidebar() {
         document.getElementById('sidebar').classList.toggle('-translate-x-full');

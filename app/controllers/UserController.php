@@ -14,9 +14,12 @@ final class UserController extends Controller
     {
         Auth::requireAdmin();
 
+        $search = $this->query('q');
+
         $this->render('users/index', [
             'title' => 'Users',
-            'users' => User::all(),
+            'users' => User::all($search !== '' ? $search : null),
+            'search' => $search,
             'old' => $this->old(),
         ]);
     }

@@ -58,6 +58,63 @@ final class FuelLog extends Model
         return $stmt->fetchAll();
     }
 
+    /**
+     * Paginated variant of filtered(). Returns the current page of rows plus
+     * the total row count (for building the pager).
+     *
+     * @return array{rows:array<int,array<string,mixed>>, total:int}
+     */
+    public static function paginated(array $filters = [], int $page = 1, int $perPage = 25): array
+    {
+        [$where, $params] = self::buildWhere($filters);
+
+        $countStmt = self::db()->prepare(
+            'SELECT COUNT(*) FROM fuel_logs fl
+             JOIN generators g ON g.id = fl.generator_id' . $where
+        );
+        $countStmt->execute($params);
+        $total = (int) $countStmt->fetchColumn();
+
+        $page = max(1, $page);
+        $perPage = max(1, min(200, $perPage));
+        $offset = ($page - 1) * $perPage;
+
+        $sql = 'SELECT fl.*, g.code AS generator_code, g.location AS generator_location
+                FROM fuel_logs fl
+                JOIN generators g ON g.id = fl.generator_id'
+            . $where
+            . ' ORDER BY fl.date DESC, fl.time DESC, fl.created_at DESC
+               LIMIT ' . $perPage . ' OFFSET ' . $offset;
+        $stmt = self::db()->prepare($sql);
+        $stmt->execute($params);
+
+        return ['rows' => $stmt->fetchAll(), 'total' => $total];
+    }
+
+    /**
+     * Aggregate sums across every row matching the filters (independent of
+     * pagination), so table footers show true totals.
+     *
+     * @return array{count:int, liters:float, cost:float}
+     */
+    public static function totals(array $filters = []): array
+    {
+        [$where, $params] = self::buildWhere($filters);
+        $stmt = self::db()->prepare(
+            'SELECT COUNT(*) AS cnt, COALESCE(SUM(fl.liters), 0) AS liters,
+                    COALESCE(SUM(fl.cost), 0) AS cost
+             FROM fuel_logs fl
+             JOIN generators g ON g.id = fl.generator_id' . $where
+        );
+        $stmt->execute($params);
+        $row = $stmt->fetch() ?: [];
+        return [
+            'count' => (int) ($row['cnt'] ?? 0),
+            'liters' => (float) ($row['liters'] ?? 0),
+            'cost' => (float) ($row['cost'] ?? 0),
+        ];
+    }
+
     /** @return array<string,mixed>|false */
     public static function find(string $id): array|false
     {

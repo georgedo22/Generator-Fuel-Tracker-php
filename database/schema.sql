@@ -66,14 +66,19 @@ SET FOREIGN_KEY_CHECKS = 1;
 -- -------------------------------------------------------------
 --  Default administrator
 --  Email:    admin@example.com
---  Password: admin123   (CHANGE THIS IMMEDIATELY AFTER FIRST LOGIN)
+--  Password: ChangeMe!2026
+--
+--  SECURITY: This is a throwaway bootstrap credential. Log in once,
+--  immediately change the password via Users > Edit, and never expose
+--  this account to the public internet. The hash below is generated
+--  with bcrypt cost 10 and is safe to commit (it is public knowledge).
 -- -------------------------------------------------------------
 INSERT INTO `users` (`id`, `name`, `email`, `password_hash`, `role`)
 VALUES (
     '00000000-0000-0000-0000-000000000001',
     'System Administrator',
     'admin@example.com',
-    '$2b$10$vY8CPXMxjlSB5XoZn694fOjx6BDx4DMt8v7jsXFMQYM3iUil7lYFO',
+    '$2y$10$KGiDb7CT7a9OvOZ7iivQd.4W9gOpu5d2GYHqaW.kZoJ7URRDCi4US',
     'ADMIN'
 )
 ON DUPLICATE KEY UPDATE `email` = `email`;

@@ -1,5 +1,6 @@
 <?php
 /** @var array $users */
+/** @var string $search */
 
 use App\Core\Helpers;
 
@@ -7,8 +8,20 @@ $actions = '<button type="button" onclick="openCreate()" class="inline-flex h-10
 ?>
 <?= page_header('Users', 'Manage who can access the system and their role.', $actions) ?>
 
+<form method="get" action="<?= url('/users') ?>" class="mb-4 flex items-center gap-2 no-print">
+    <div class="relative w-full max-w-md">
+        <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><?= icon('search', 'h-4 w-4') ?></span>
+        <input type="text" name="q" value="<?= Helpers::e($search ?? '') ?>" placeholder="Search by email..."
+               class="h-10 w-full rounded-lg border border-slate-300 bg-white pl-9 pr-3 text-sm focus:border-brand-500 focus:ring-brand-500">
+    </div>
+    <button type="submit" class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-slate-300 bg-white text-slate-600 hover:bg-slate-50" title="Search"><?= icon('filter', 'h-4 w-4') ?></button>
+    <?php if (($search ?? '') !== ''): ?>
+        <a href="<?= url('/users') ?>" class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-slate-300 bg-white text-slate-500 hover:bg-slate-50" title="Clear"><?= icon('refresh', 'h-4 w-4') ?></a>
+    <?php endif; ?>
+</form>
+
 <div class="rounded-xl border border-slate-200 bg-white shadow-sm">
-    <div class="border-b border-slate-100 px-5 py-4"><h3 class="text-base font-semibold text-slate-900">All users</h3></div>
+    <div class="border-b border-slate-100 px-5 py-4"><h3 class="text-base font-semibold text-slate-900"><?= ($search ?? '') !== '' ? 'Users matching “' . Helpers::e($search) . '”' : 'All users' ?></h3></div>
     <div class="table-wrap">
         <table class="w-full text-sm">
             <thead class="bg-slate-50 text-left text-xs uppercase text-slate-500">
@@ -20,6 +33,9 @@ $actions = '<button type="button" onclick="openCreate()" class="inline-flex h-10
                 </tr>
             </thead>
             <tbody class="divide-y divide-slate-100">
+                <?php if ($users === []): ?>
+                    <tr><td colspan="4" class="px-5 py-8 text-center text-slate-500">No users match this email search.</td></tr>
+                <?php endif; ?>
                 <?php foreach ($users as $u): ?>
                     <tr>
                         <td class="px-5 py-3 font-medium text-slate-800"><?= Helpers::e((string) $u['name']) ?></td>
