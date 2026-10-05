@@ -1,12 +1,23 @@
-# Local configuration with real credentials — never commit
+# Local configuration with real credentials
 app/config/config.local.php
 
-# Runtime rate-limit buckets
-/storage/rate-limit/
+# Temporary import files
+storage/tmp/*
+!storage/tmp/.gitkeep
 
-# OS / editor cruft
+# Uploaded images (keep the directory, ignore its contents)
+public/uploads/*
+!public/uploads/.gitkeep
+
+# Rate-limiter runtime buckets
+storage/rate-limit/
+
+# Local CSS build dependencies
+app/assets-build/node_modules/
+
+# OS / editor
 .DS_Store
 Thumbs.db
-
-# Node build artifacts (keep package.json & configs tracked)
-node_modules/
+*.log
+.idea/
+.vscode/
