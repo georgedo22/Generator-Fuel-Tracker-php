@@ -17,14 +17,23 @@ final class Database
             return self::$pdo;
         }
 
-        $host = (string) config('db.host', 'localhost');
-        $name = (string) config('db.name', '');
-        $user = (string) config('db.user', '');
-        $pass = (string) config('db.pass', '');
-        $charset = (string) config('db.charset', 'utf8mb4');
-        $port = (int) config('db.port', 3306);
+        // Optional explicit DSN override (e.g. sqlite for local demos/tests).
+        $dsnOverride = config('db.dsn');
 
-        $dsn = sprintf('mysql:host=%s;port=%d;dbname=%s;charset=%s', $host, $port, $name, $charset);
+        if (is_string($dsnOverride) && $dsnOverride !== '') {
+            $dsn  = $dsnOverride;
+            $user = (string) config('db.user', '');
+            $pass = (string) config('db.pass', '');
+        } else {
+            $host = (string) config('db.host', 'localhost');
+            $name = (string) config('db.name', '');
+            $user = (string) config('db.user', '');
+            $pass = (string) config('db.pass', '');
+            $charset = (string) config('db.charset', 'utf8mb4');
+            $port = (int) config('db.port', 3306);
+
+            $dsn = sprintf('mysql:host=%s;port=%d;dbname=%s;charset=%s', $host, $port, $name, $charset);
+        }
 
         self::$pdo = new \PDO($dsn, $user, $pass, [
             \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,

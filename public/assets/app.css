@@ -63,3 +63,28 @@ nav::-webkit-scrollbar-track {
         background: #fff !important;
     }
 }
+/* ---- Searchable Select (searchable-select.js) ---- */
+.searchable-panel {
+    top: calc(100% + 0.25rem);
+    max-height: 17rem;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+.searchable-panel.open {
+    display: block;
+    display: flex;
+}
+.searchable-list {
+    max-height: 13rem;
+}
+.ss-search {
+    border: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    outline: none !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    background-image: none !important;
+}

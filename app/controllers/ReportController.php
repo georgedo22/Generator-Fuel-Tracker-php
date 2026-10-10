@@ -23,6 +23,7 @@ final class ReportController extends Controller
         Auth::requireLogin();
 
         $filters = $this->filters();
+        // Summaries must cover the whole filtered set, not one page.
         $logs = FuelLog::filtered($filters);
         $generators = Generator::allSimple();
         $summary = $this->summaries($logs);

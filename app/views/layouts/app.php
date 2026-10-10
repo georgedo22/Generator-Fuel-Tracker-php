@@ -31,7 +31,7 @@ $appName = (string) config('app.name', 'Generator Fuel Tracker');
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-    <link rel="stylesheet" href="<?= asset('app.css') ?>">
+    <link rel="stylesheet" href="<?= asset('app.css') ?>?v=<?= @filemtime(base_path('public/assets/app.css')) ?: time() ?>">
     <style>
         [x-cloak] { display: none !important; }
         .table-wrap { overflow-x: auto; }
@@ -143,6 +143,7 @@ $appName = (string) config('app.name', 'Generator Fuel Tracker');
     </div>
 </div>
 
+<script src="<?= asset('searchable-select.js') ?>?v=<?= @filemtime(base_path('public/assets/searchable-select.js')) ?: time() ?>"></script>
 <script>
     function toggleSidebar() {
         document.getElementById('sidebar').classList.toggle('-translate-x-full');

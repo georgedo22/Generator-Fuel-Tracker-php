@@ -51,6 +51,12 @@ if (!function_exists('asset')) {
 $router = new Router();
 
 // ---------------------------------------------------------------
+//  "Remember me" — restore the session from a valid cookie when
+//  the PHP session has expired but the user hasn't logged out.
+// ---------------------------------------------------------------
+\App\Core\Remember::attemptSessionRestore();
+
+// ---------------------------------------------------------------
 //  Root
 // ---------------------------------------------------------------
 $router->get('/', function () {

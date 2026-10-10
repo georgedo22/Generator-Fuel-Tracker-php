@@ -4,6 +4,8 @@
 /** @var array $filters */
 /** @var float $totalLiters */
 /** @var float $totalCost */
+/** @var int $logCount */
+/** @var array $pagination */
 
 use App\Core\Helpers;
 
@@ -24,7 +26,7 @@ $actions .= '<button type="button" onclick="openLogCreate()" class="inline-flex 
     <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
         <div>
             <label class="mb-1.5 block text-sm font-medium text-slate-700">Generator</label>
-            <select name="generator_id" class="h-10 w-full rounded-lg border border-slate-300 px-3 text-sm focus:border-brand-500 focus:ring-brand-500">
+            <select name="generator_id" data-searchable class="h-10 w-full rounded-lg border border-slate-300 px-3 text-sm focus:border-brand-500 focus:ring-brand-500">
                 <option value="">All generators</option>
                 <?php foreach ($generators as $g): ?>
                     <option value="<?= Helpers::e((string) $g['id']) ?>" <?= $filters['generatorId'] === $g['id'] ? 'selected' : '' ?>><?= Helpers::e((string) $g['code']) ?></option>
@@ -115,7 +117,7 @@ $actions .= '<button type="button" onclick="openLogCreate()" class="inline-flex 
             <?php if ($logs !== []): ?>
                 <tfoot class="bg-slate-50 font-medium">
                     <tr>
-                        <td class="px-4 py-3" colspan="4">Total (<?= count($logs) ?> logs)</td>
+                        <td class="px-4 py-3" colspan="4">Total (<?= (int) $logCount ?> logs)</td>
                         <td class="px-4 py-3"><?= Helpers::e(Helpers::number($totalLiters)) ?></td>
                         <td class="px-4 py-3" colspan="5"></td>
                         <td class="px-4 py-3"><?= Helpers::e(Helpers::naira($totalCost)) ?></td>
@@ -125,6 +127,7 @@ $actions .= '<button type="button" onclick="openLogCreate()" class="inline-flex 
             <?php endif; ?>
         </table>
     </div>
+<?= pagination($pagination, $_GET) ?>
 </div>
 
 <!-- Fuel log modal -->
@@ -140,7 +143,7 @@ $actions .= '<button type="button" onclick="openLogCreate()" class="inline-flex 
             <?= \App\Core\Csrf::field() ?>
             <div>
                 <label class="mb-1.5 block text-sm font-medium text-slate-700">Generator</label>
-                <select name="generator_id" id="l_generator" required class="h-10 w-full rounded-lg border border-slate-300 px-3 text-sm focus:border-brand-500 focus:ring-brand-500">
+                <select name="generator_id" id="l_generator" data-searchable required class="h-10 w-full rounded-lg border border-slate-300 px-3 text-sm focus:border-brand-500 focus:ring-brand-500">
                     <option value="">Select a generator</option>
                     <?php foreach ($generators as $g): ?>
                         <option value="<?= Helpers::e((string) $g['id']) ?>"><?= Helpers::e((string) $g['code']) ?> — <?= Helpers::e((string) $g['location']) ?></option>

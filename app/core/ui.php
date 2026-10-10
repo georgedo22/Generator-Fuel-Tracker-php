@@ -89,3 +89,65 @@ if (!function_exists('badge')) {
             . ($tones[$tone] ?? $tones['slate']) . '">' . \App\Core\Helpers::e($label) . '</span>';
     }
 }
+
+if (!function_exists('pagination')) {
+    /**
+     * Render a pager for paginated listings.
+     *
+     * @param array $pag ['page'=>int,'perPage'=>int,'total'=>int,'path'=>string]
+     * @param array $query Current query-string filters to preserve across pages.
+     */
+    function pagination(array $pag, array $query = []): string
+    {
+        $total = (int) ($pag['total'] ?? 0);
+        $perPage = max(1, (int) ($pag['perPage'] ?? 25));
+        $page = max(1, (int) ($pag['page'] ?? 1));
+        $pages = (int) ceil($total / $perPage);
+        if ($pages <= 1) {
+            return '';
+        }
+
+        $unset = ['generator_id', 'fuel_type', 'tank', 'from', 'to', 'page'];
+        foreach ($unset as $k) {
+            $query[$k] = '';
+        }
+        $query = array_filter($query, static fn ($v) => $v !== '' && $v !== null);
+
+        $link = static function (int $n) use ($pag, $query): string {
+            $query['page'] = $n;
+            $qs = http_build_query($query);
+            return htmlspecialchars(($pag['path'] ?? '') . ($qs !== '' ? '?' . $qs : ''), ENT_QUOTES);
+        };
+
+        $html = '<nav class="mt-4 flex flex-wrap items-center justify-between gap-3 px-1 text-sm no-print" aria-label="Pagination">';
+        $from = ($page - 1) * $perPage + 1;
+        $to = min($total, $page * $perPage);
+        $html .= '<p class="text-slate-500">Showing <span class="font-medium text-slate-700">' . $from . '–' . $to . '</span> of <span class="font-medium text-slate-700">' . $total . '</span></p>';
+        $html .= '<div class="flex items-center gap-1">';
+
+        $btn = 'inline-flex h-9 min-w-9 items-center justify-center rounded-lg border px-3 transition';
+        $idle = 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50';
+        $active = 'border-brand-600 bg-brand-600 text-white';
+        $disabled = 'border-slate-200 bg-slate-50 text-slate-300 pointer-events-none';
+
+        // Windowed page numbers with first/last + ellipsis.
+        $nums = [];
+        for ($n = 1; $n <= $pages; $n++) {
+            if ($n === 1 || $n === $pages || abs($n - $page) <= 2) {
+                $nums[] = $n;
+            }
+        }
+        $prev = 0;
+        foreach ($nums as $n) {
+            if ($prev && $n - $prev > 1) {
+                $html .= '<span class="px-1 text-slate-400">…</span>';
+            }
+            $cls = $n === $page ? $btn . ' ' . $active : $btn . ' ' . $idle;
+            $html .= '<a href="' . $link($n) . '" class="' . $cls . '">' . $n . '</a>';
+            $prev = $n;
+        }
+
+        $html .= '</div></nav>';
+        return $html;
+    }
+}
